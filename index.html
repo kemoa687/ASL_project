@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>Sign Bridge</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>Sign Bridge</h1>
+    <div class="tabs" role="tablist" aria-label="Mode">
+      <button id="tabSign" role="tab" aria-selected="true" aria-controls="panelSign">Sign &rarr; Speech</button>
+      <button id="tabText" role="tab" aria-selected="false" aria-controls="panelText">Text &rarr; Sign</button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" role="alert" hidden></div>
+
+  <main>
+    <!-- ============ SIGN -> SPEECH ============ -->
+    <section id="panelSign" class="panel" role="tabpanel" aria-labelledby="tabSign">
+      <div class="col stage-col">
+        <div class="stage">
+          <canvas id="view" width="640" height="480" aria-label="Camera view with hand tracking"></canvas>
+          <div id="stageMsg" class="stage-msg">Camera is off</div>
+          <div class="hud" aria-live="polite">
+            <span id="hudLetter" class="hud-letter">&ndash;</span>
+            <div class="hud-bar" aria-hidden="true"><div id="hudFill"></div></div>
+          </div>
+        </div>
+        <div class="row">
+          <button id="btnCam" class="primary">Start camera</button>
+          <button id="btnSwitch" hidden>Switch camera</button>
+          <label class="check"><input type="checkbox" id="chkMirror" checked> Mirror view</label>
+        </div>
+        <p class="hint">Hold a letter steady until the bar fills. Hold it about 1.5 s longer to repeat it (for double letters like LL).
+          If letters come out wrong with your hand, toggle <b>Mirror view</b>.</p>
+      </div>
+
+      <div class="col">
+        <label for="sentence" class="label">Your sentence</label>
+        <textarea id="sentence" rows="3" placeholder="Letters you sign appear here. You can also type or edit." autocapitalize="off" spellcheck="false"></textarea>
+        <div class="row">
+          <button id="btnSpace">Space</button>
+          <button id="btnBack">Delete letter</button>
+          <button id="btnClear">Clear</button>
+        </div>
+
+        <div id="fixes" class="fixes" aria-live="polite"></div>
+
+        <div class="row">
+          <button id="btnFix">Fix spelling</button>
+          <button id="btnUndo" disabled>Undo</button>
+        </div>
+        <p id="fixNote" class="hint" aria-live="polite">Checks spelling only. Always read the sentence before speaking it.</p>
+
+        <div class="row speak-row">
+          <button id="btnSpeak" class="primary big">Speak</button>
+          <button id="btnStop">Stop</button>
+        </div>
+        <details class="opts">
+          <summary>Voice options</summary>
+          <label class="field">Voice <select id="voice"></select></label>
+          <label class="field">Speed <input type="range" id="rate" min="0.6" max="1.4" step="0.1" value="0.9"></label>
+          <label class="check"><input type="checkbox" id="chkAutoFix" checked> Fix close spelling mistakes when I press Speak</label>
+        </details>
+      </div>
+    </section>
+
+    <!-- ============ TEXT -> SIGN ============ -->
+    <section id="panelText" class="panel" role="tabpanel" aria-labelledby="tabText" hidden>
+      <div class="col">
+        <label for="signInput" class="label">What do you want to say?</label>
+        <textarea id="signInput" rows="3" placeholder="Type here, or press the microphone and speak." spellcheck="false"></textarea>
+        <div class="row">
+          <button id="btnMic" hidden>Speak instead</button>
+          <button id="btnPlay" class="primary">Show in sign</button>
+          <button id="btnSignStop">Stop</button>
+        </div>
+        <div class="row">
+          <label class="field">Speed <input type="range" id="signSpeed" min="0.5" max="2" step="0.25" value="1"></label>
+          <label class="check"><input type="checkbox" id="chkFlip"> Flip hand</label>
+        </div>
+        <p class="hint">Shows each letter as a hand shape (fingerspelling). J and Z are signed with movement, so they appear as a still pose here.</p>
+      </div>
+      <div class="col stage-col">
+        <div class="stage square">
+          <canvas id="signCanvas" width="720" height="720" aria-label="Sign for the current letter"></canvas>
+          <div id="signLetter" class="sign-letter" aria-live="polite"></div>
+        </div>
+        <div id="signStrip" class="strip" aria-hidden="true"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Works even if the app module itself fails to load (e.g. page opened from disk) -->
+  <script>
+    if (location.protocol === "file:") {
+      var b = document.getElementById("banner");
+      b.hidden = false;
+      b.textContent = "Open this page through a web server, not by double-clicking it. In this folder run: python -m http.server 8000, then visit http://localhost:8000";
+    }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
